@@ -199,6 +199,10 @@ ctrl+r重做
 - ysaptli> 用tag li标签包围一段文字
 
 
+## vscode中的快捷键
+
+汇总vscode的快捷键
+
 ## 参考资料
 
 [1] vscode中加入vim [https://www.barbarianmeetscoding.com/boost-your-coding-fu-with-vscode-and-vim/table-of-contents](https://www.barbarianmeetscoding.com/boost-your-coding-fu-with-vscode-and-vim/table-of-contents)
