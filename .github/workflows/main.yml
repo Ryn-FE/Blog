@@ -40,7 +40,7 @@ jobs:
         run: npm run build
 
       - name: install coscmd
-        run: sudo pip install coscmd
+        run: sudo npm i -g @cloudbase/cli
 
       - name: Config coscmd
         env:
@@ -48,7 +48,7 @@ jobs:
           SECRET_KEY: ${{secrets.SECRET_KEY}}
           BUCKET: coding-pages-bucket-219762-8173383-9132-437729-1251240781
           REGION: ap-beijing
-        run: coscmd config -a $SECRET_ID -s $SECRET_KEY -b $BUCKET -r $REGION
+        run: tcb login --apiKeyId $SECRET_ID --apiKey $SECRET_KEY
       
       - name: upload
-        run: coscmd upload -r ./public/ /
+        run: tcb hosting deploy ./public/ / -e hexo-blog-8grtbkj7941ec885
