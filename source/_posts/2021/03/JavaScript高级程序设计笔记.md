@@ -142,3 +142,27 @@ console.log(String.raw`\u00A9`) // \u00A9
 ```
 
 #### Symbol类型
+
+除了一些我们平时了解的一些方式，Symbol.for()方法可以创建相同的symbol。
+
+```JavaScript
+Symbol.for('foo') === Symbol.for('foo') // true
+```
+
+Symbol.keyFor可以查询注册表。其参数必须是symbol类型。等还有很多Symbol方式，就不介绍了
+
+#### Object类型
+
+每个Object实例都有以下属性和方法：
+
+- constructor：用于创建当前对象的函数
+- hasOwnProperty(propertyName)：用于判断当前对象实例（不是原型）上是否存在给定的属性。要检查的属性名必须是字符串或者符号
+- isPrototypeOf(object)：用于判断当前对象是否为另一个对象的原型
+- propertyIsEnumerable(propertyName)：用来判断给定的属性是否可以使用
+- toLocaleString()：返回对象的字符串表示，该字符串反映对象所在的本地化执行环境
+- toString()：返回对象的字符串表示
+- valueOd()：返回对象对应的字符串、数值或布尔值表示
+
+### 操作符
+
+++以及--有前缀操作和后缀操作，前缀操作就是先执行++然后赋值，后缀操作是先赋值后++。对象则会调用valueOf的方法取得可以操作的值，如果是NaN，调用toString并再次应用其他规则
