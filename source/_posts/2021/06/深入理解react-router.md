@@ -57,13 +57,13 @@ window.location.hash改变URL的hash值，改变hash同样会产生新的历史�
 
 window.location.replace替换栈记录，设置绝对路径时，会刷新页面
 
-当移动栈指针的时候会触发popstate事件，通过window.addEventListener进行监听，对于回调函数的event事件，event.state是重点关注的，其值为移动后栈中记录的state对象。pushState以及repalceState不会触发popstate事件。当然你也可以使用history.state来获取state对象。location.href设置hash的时候，一样的hash也会出发popstate，但是栈没变，location.hash则不会。
+当移动栈指针的时候会触发popstate事件，通过window.addEventListener进行监听，对于回调函数的event事件，event.state是重点关注的，其值为移动后栈中记录的state对象。pushState以及repalceState不会触发popstate事件。当然你也可以使用history.state来获取state对象。location.href设置hash的时候，一样的hash也会触发popstate，但是栈没变，location.hash则不会触发popstate。
 
 hashchange用来监听浏览器的hash值变化，pushState不触发hashchange事件
 
 可以调用window.dispatchEvent(new PopStateEvent('popstate'))来主动出发popstate事件
 
-## history库详解
+## react的history库详解
 
 history是一个单独的库，提供了createBrowserHistory，createHashHistory，creatMemoryHistory。其中个历史对象都具备
 
@@ -114,6 +114,66 @@ interface History<any> {
 // hashHistory 在创建hashHistory时，除了一些公共的配置，还可以设置hash类型，不可设置keyLength，forceRefresh配置
 type HashType = 'hashbang' | 'noslash' | 'slash'; // 默认slash：其#号后面都会跟上/，noslash则#号后面都没有/，hashbang为#号后会跟上!和/，页面信息抓取用hashbang更好，页面初始化的过程中，encodedPath和hashPath不同，所以会进行一次初始化，因而每次会在页面后追加/#/
 ```
+
+window.location.replace仅传入hash字符串的调用会将window.location.pathname改成base的值。后续高版本中修复了这个问题。监听还是采用listen的方式进行
+
+history.createHref可以将location对象转换成对应的URL字符串，不会对原字符做任何编码处理，其会判断文档流中有没有base元素
+
+memoryHistory，basename在此中不被支持，其所有的信息都保存在location中。
+
+```JavaScript
+interface MemoryHistoryBuildOptions {
+    getUserConfirmation?: typeof getUserconfirmation;
+    initialEntries?: string[]; // 类似历史栈记录，默认['/']
+    initialIndex?: number;
+    keyLength?: number;
+}
+interface MemoryHistory<HistoryLocationState = LocationState> extends History<HistoryLocationState> {
+    index: number;
+    entries: Location<HistoryLocationState>[]; // 历史栈数组
+    canGo(n: number): boolean; // 是否可以跳转到位置n
+}
+```
+
+history库的整体运行流程
+
+![history](https://gitee.com/RenYaNan/wx-photo/raw/master/2021-6-7/1623047216789-%E5%9B%BE%E7%89%87.png)
+
+问题：
+1. 刷新页面后历史栈丢失
+2. 移动端限制
+3. hash路由问题，手动修改页面hash
+
+## React相关
+
+creatContext创建context容器，Provider提供跨层级数据，consumer进行接收，如果传递的数据进行了对应的更新，触发render，那么Provider会将最新的value传递给所有的Consumer。当提供的数据更新时，没Consumer的组件不会触发更新。当有多个Provider时，Consumer使用的是最近一级的Provider提供的值。
+
+useEffect不会阻碍浏览器的绘制，使用了一种特殊手段保证了effect在绘制后触发，其使用了MessageChannel的方式，结合requestAnimationFrame达到绘制完成后触发effect函数，effect适合执行无dom依赖，不阻碍主线程渲染的副作用，如网络请求，事件绑定等。
+
+对于清除副作用，每个effect都返回一个清除函数。执行的时机是在执行当前effect之前对上一个effect进行清除。除了每次更新会清除，在组件卸载的时候也会清除
+
+第二个参数为依赖列表，那么React是如何知道依赖列表的值发生的改变呢？其通过Object.is进行元素前后的比较。其比较的是对象的引用。可以使用社区的use-deep-compare-effect方式进行比较
+
+useEffect特性
+1. Capture Value特性
+2. async函数特性，由于async返回的是promise，和effect函数返回的clean函数冲突
+3. 空数组依赖
+
+useLayoutEffect，都可从DOM中获取其变更后的属性。layoutEffect运行是同步的，影响浏览器的渲染
+
+useRef，不仅可以保存对应的dom，current属性还能保存一些数据，数据变化时dom不刷新
+
+useMemo用来缓存某些函数的返回值。使用缓存避免每次渲染都重新执行相关函数。
+useCallback
+useContext
+
+自定义hook，hooks的基本准则，不能在条件循环中使用，不能在普通函数中使用
+
+forwardRed可以对ref进行传递
+
+React.memo可以对组件进行缓存，第二个参数可以决定是否渲染。不可以把react.memo放在组件渲染过程中
+
+## 认识React Router
 
 
 
