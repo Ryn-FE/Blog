@@ -65,7 +65,7 @@ ssh-keygen -t rsa -C "youremail@example.com"
 - git branch --set-upstream-to=origin/dev dev 指定本地分支与远程origin/dev分支的链接
 - git rebase 把本地未push分叉的提交历史整理成一条直线
 
-## 标签管理
+## 5. 标签管理
 
 标签作为一个版本库的快照
 
@@ -76,6 +76,6 @@ ssh-keygen -t rsa -C "youremail@example.com"
 - git push origin --tags 推送所有标签
 - git push origin :refs/tags/v0.9 先删除本地的内容，再删除远端的内容
 
-## 配置管理
+## 6. 配置管理
 
 - git config --global color.ui true 显示颜色
